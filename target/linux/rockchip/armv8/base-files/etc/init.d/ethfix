@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+START=99
+
+. /lib/functions/system.sh
+
+boot() {
+	case $(board_name) in
+	linkstar,opc-h68k)
+		[ -f '/usr/sbin/ethtool' ] && \
+			ethtool -s eth2 advertise 0x80000000002f && \
+			ethtool -s eth3 advertise 0x80000000002f
+		;;
+	esac
+}
