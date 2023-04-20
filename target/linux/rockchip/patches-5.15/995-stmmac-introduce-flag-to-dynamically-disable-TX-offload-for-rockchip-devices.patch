@@ -1,0 +1,40 @@
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 6a2e1031a..4552147e9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3660,6 +3660,10 @@ static netdev_features_t stmmac_fix_features(struct net_device *dev,
+ 	if (priv->plat->bugged_jumbo && (dev->mtu > ETH_DATA_LEN))
+ 		features &= ~NETIF_F_CSUM_MASK;
+ 
++	/* Including very small MTUs of 1498 for Rockchip devices */
++	if (priv->plat->bugged_tx_coe && (dev->mtu > ETH_DATA_LEN - 2))
++		features &= ~NETIF_F_CSUM_MASK;
++
+ 	/* Disable tso if asked by ethtool */
+ 	if ((priv->plat->tso_en) && (priv->dma_cap.tsoen)) {
+ 		if (features & NETIF_F_TSO)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 3031f2bf1..807cf5826 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -519,6 +519,8 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
+ 		pr_warn("force_sf_dma_mode is ignored if force_thresh_dma_mode is set.");
+ 	}
+ 
++	plat->bugged_tx_coe = of_property_read_bool(np, "rockchip,bugged_tx_coe");
++
+ 	of_property_read_u32(np, "snps,ps-speed", &plat->mac_port_sel_speed);
+ 
+ 	plat->axi = stmmac_axi_setup(pdev);
+diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+index 4335bd771..60c411f43 100644
+--- a/include/linux/stmmac.h
++++ b/include/linux/stmmac.h
+@@ -162,6 +162,7 @@ struct plat_stmmacenet_data {
+ 	int pmt;
+ 	int force_sf_dma_mode;
+ 	int force_thresh_dma_mode;
++	int bugged_tx_coe;
+ 	int riwt_off;
+ 	int max_speed;
+ 	int maxmtu;
