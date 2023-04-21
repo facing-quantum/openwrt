@@ -27,6 +27,7 @@
 		     &gmac0_rx_bus2
 		     &gmac0_rgmii_clk
 		     &gmac0_rgmii_bus>;
+	rockchip,bugged_tx_coe;
 	snps,reset-gpio = <&gpio2 RK_PD3 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
 	snps,reset-delays-us = <0 20000 100000>;
@@ -48,6 +49,7 @@
 		     &gmac1m1_rx_bus2
 		     &gmac1m1_rgmii_clk
 		     &gmac1m1_rgmii_bus>;
+	rockchip,bugged_tx_coe;
 	snps,reset-gpio = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
 	snps,reset-delays-us = <0 20000 100000>;
