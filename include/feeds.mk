@@ -30,14 +30,12 @@ endef
 # 1: destination file
 define FeedSourcesAppend
 ( \
-  echo 'src/gz %d_core %U/targets/%S/packages'; \
+  echo 'src/gz %d_core https://raw.githubusercontent.com/croniccorey/opkg-repo/$(shell date +%Y%m%d)/packages/%S/packages'; \
   $(strip $(if $(CONFIG_PER_FEED_REPO), \
-	echo 'src/gz %d_base %U/packages/%A/base'; \
-	$(if $(filter %SNAPSHOT-y,$(VERSION_NUMBER)-$(CONFIG_BUILDBOT)), \
-		echo 'src/gz %d_kmods %U/targets/%S/kmods/$(LINUX_VERSION)-$(LINUX_RELEASE)-$(LINUX_VERMAGIC)';) \
+	echo 'src/gz %d_base https://raw.githubusercontent.com/croniccorey/opkg-repo/$(shell date +%Y%m%d)/packages/%A/base'; \
 	$(foreach feed,$(FEEDS_AVAILABLE), \
 		$(if $(CONFIG_FEED_$(feed)), \
-			echo '$(if $(filter m,$(CONFIG_FEED_$(feed))),# )src/gz %d_$(feed) %U/packages/%A/$(feed)';)))) \
+			echo '$(if $(filter m,$(CONFIG_FEED_$(feed))),# )src/gz %d_$(feed) https://raw.githubusercontent.com/croniccorey/opkg-repo/$(shell date +%Y%m%d)/packages/%A/$(feed)';)))) \
 ) >> $(1)
 endef
 
