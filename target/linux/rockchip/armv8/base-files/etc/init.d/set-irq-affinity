@@ -1,0 +1,29 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+. /lib/functions/system.sh
+
+set_irq_affinity() {
+	local mask="$1"
+	local iface="$2"
+	local device="$3"
+
+	[ -z "${device}" ] && device="$iface"
+
+	for irq in $(grep "$device" /proc/interrupts | cut -d: -f1 | sed 's, *,,')
+	do
+		echo "$mask" > "/proc/irq/$irq/smp_affinity"
+	done
+}
+
+start() {
+	case $(board_name) in
+	linkstar,opc-h68k)
+		set_irq_affinity 1 eth0
+		set_irq_affinity 2 eth1
+		set_irq_affinity 4 eth2
+		set_irq_affinity 8 eth3
+		;;
+	esac
+}
